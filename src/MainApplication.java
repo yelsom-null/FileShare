@@ -8,11 +8,9 @@ public class MainApplication {
         Peer peer1 = new Peer("Peer1", 850);
         Peer peer2 = new Peer("Peer2", 851);
 
-        peer1.shareFile("file1");
-        peer1.shareFile("file2");
+        peer1.shareFilesFromDirectory("/path/to/directory");
 
-        peer2.shareFile("file3");
-
+        FileShareGUI gui = new FileShareGUI(peer1);
         Thread thread1 = new Thread(peer1);
         Thread thread2 = new Thread(peer2);
 

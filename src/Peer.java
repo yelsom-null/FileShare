@@ -1,7 +1,4 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -9,7 +6,6 @@ import java.util.List;
 
 public class Peer implements Runnable{
     private String peerID;
-    FileMetaData fileMetaData;
     private final List<FileMetaData> sharedFiles;
     private final int port;
 
@@ -28,6 +24,19 @@ public class Peer implements Runnable{
         System.out.println("Files shared by " + peerID + ": ");
         for (FileMetaData file : sharedFiles) {
             System.out.println(file.fileName);
+        }
+    }
+
+    public void shareFilesFromDirectory(String directoryPath) {
+        File folder = new File(directoryPath);
+        File[] listOfFiles = folder.listFiles();
+
+        if (listOfFiles != null) {
+            for (File file : listOfFiles) {
+                if (file.isFile()) {
+                    shareFile(file.getName());
+                }
+            }
         }
     }
 
