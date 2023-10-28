@@ -1,56 +1,68 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 
 public class FileShareGUI {
-    private Peer peer;
-    private JFrame frame;
-    private JButton openButton;
+    private final Peer peer1, peer2;
+    private final JFrame frame;
+    private final JList<String> receivedFileList;
+    private final JButton openFileButton;
 
-    public FileShareGUI(Peer peer) {
-        this.peer = peer;
-
+    public FileShareGUI(Peer peer1, Peer peer2, ArrayList<String> receivedFiles) {
+        this.peer1 = peer1;
+        this.peer2 = peer2;
 
         frame = new JFrame("File Share");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(300, 200);
+        frame.setSize(600, 200);
 
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        frame.getContentPane().add(mainPanel);
 
-        JPanel panel = new JPanel();
-        frame.add(panel);
+        JPanel peer1Panel = new JPanel();
+        peer1Panel.setBorder(BorderFactory.createTitledBorder("Peer 1"));
+        mainPanel.add(peer1Panel, BorderLayout.WEST);
 
-
-        openButton = new JButton("Open File");
-        panel.add(openButton);
-
-
-        openButton.addActionListener(new ActionListener() {
+        openFileButton = new JButton("Open File");
+        openFileButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
+                System.out.println("Open File button clicked.");
                 JFileChooser fileChooser = new JFileChooser();
-                fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-                fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-                int result = fileChooser.showOpenDialog(frame);
-
-                if (result == JFileChooser.APPROVE_OPTION) {
+                int returnValue = fileChooser.showOpenDialog(null);
+                if (returnValue == JFileChooser.APPROVE_OPTION) {
                     File selectedFile = fileChooser.getSelectedFile();
-                    String fileName = selectedFile.getName();
-                    System.out.println("Selected file: " + fileName);
+                    String filePath = selectedFile.getAbsolutePath();
+                    System.out.println("Selected file: " + filePath);
+
+                    peer1.shareFile(filePath);
+                } else {
+                    System.out.println("File selection was cancelled.");
                 }
             }
         });
 
+        peer1Panel.add(openFileButton);
 
+        JPanel peer2Panel = new JPanel();
+        peer2Panel.setBorder(BorderFactory.createTitledBorder("Peer 2"));
+        mainPanel.add(peer2Panel, BorderLayout.EAST);
+
+        receivedFileList = new JList<>(receivedFiles.toArray(new String[0]));
+        peer2Panel.add(new JScrollPane(receivedFileList));
 
         frame.setVisible(true);
     }
 
-    public static void main(String[] args) {
-        Peer peer = new Peer("Peer1", 850);
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                new FileShareGUI(peer);
-            }
+    public void updateReceivedFilesList(ArrayList<String> receivedFiles) {
+        System.out.println("Updating received files list");
+        SwingUtilities.invokeLater(() -> {
+            receivedFileList.setListData(receivedFiles.toArray(new String[0]));
+            receivedFileList.revalidate();
+            receivedFileList.repaint();
         });
     }
 }

@@ -31,6 +31,8 @@ After starting the `MainApplication`, you will see messages indicating the files
 
 ### Future Improvements
 
-- **Add GUI/Command-line Interface**: To allow for easier interaction with the application.
 - **Support for Transferring Actual Files**: To enable file transfers in addition to just sharing file names.
+
+### Complete
+- **Add GUI/Command-line Interface**: To allow for easier interaction with the application.
 
